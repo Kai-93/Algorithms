@@ -2,7 +2,7 @@
  * @Author: Kaiser
  * @Date: 2021-03-03 11:57:29
  * @Last Modified by: Kaiser
- * @Last Modified time: 2021-03-08 06:31:42
+ * @Last Modified time: 2021-03-08 12:36:25
  * @Description: 堆排序
  * 核心逻辑:
  * 将待排序序列构造成一个大顶堆，此时，整个序列的最大值就是堆顶的根节点。
@@ -10,6 +10,7 @@
  * 然后将剩余n-1个元素重新构造成一个堆，这样会得到n个元素的次小值。
  * 如此反复执行，便能得到一个有序序列了
  * 排序流程动画: https://vdn1.vzuu.com/SD/3bb38dfe-236a-11eb-8039-a6caf32b14c9.mp4?disable_local_cache=1&auth_key=1614941465-0-0-5482e07536575f85fd72370db23a6477&f=mp4&bu=pico&expiration=1614941465&v=hw
+ * 参考文档: https://www.cnblogs.com/chengxiao/p/6129630.html
  */
 
 const swap = require('./swap');

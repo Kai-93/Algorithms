@@ -2,8 +2,8 @@
  * @Author: Kaiser
  * @Date: 2021-03-03 07:08:13
  * @Last Modified by: Kaiser
- * @Last Modified time: 2021-03-03 12:00:44
- * @Description:  基数排序(radix sort) / 分配式排序(distribution sort) / 桶子法(bucket sort or bin sort)
+ * @Last Modified time: 2021-03-09 19:28:31
+ * @Description: 基数排序(radix sort), 属于桶子排序(bucket sort or bin sort)
  * 适用于整数, 从数值的最低位(即个位数开始排序),依次排序,直至最最最高位
  */
 
