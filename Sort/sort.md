@@ -141,38 +141,107 @@ function partition(arr, left = 0, right = arr.length - 1) {
 
 ### 核心逻辑
 
-遍历无序数组(arr)的每一个元素(arr[]i), 将每个元素(arr[i])插入值至有序数组(arr[0 到 i-1])中, 即有个指针(preIndex)保存着当前元素前一个元素的下标(preIndex = i - 1), 并将指针值递减(preIndex -= 1), 指针值对应的元素(arr[preIndex])依次与当前元素(arr[i])作比较, 满足条件(arr[preIndex] > arr[i])就交换, 直到当前元素应该在的位置(即不满足交换条件), 最后将当前元素交换至该位置(arr[preIndex + 1] = arr[i])
+遍历无序数组(arr)的每一个元素(arr[i]), 将每个元素(arr[i])插入值至有序数组(arr[0 到 i-1])中, 即有个指针(preIndex)保存着当前元素前一个元素的下标(preIndex = i - 1), 并将指针值递减(preIndex -= 1), 指针值对应的元素(arr[preIndex])依次与当前元素(arr[i])作比较, 满足条件(arr[preIndex] > arr[i])就交换, 直到当前元素应该在的位置(即不满足交换条件), 最后将当前元素交换至该位置(arr[preIndex + 1] = arr[i])
 
 ### 代码实现
 
 ```JavaScript
 
-function insertion(arr) {
-  for (let i = 1, len = arr.length; i < len; i++) {
-    const temp = arr[i];
+function insert(arr) {
+  const length = arr.length;
+  for (let i = 1; i < length; i++) {
+    const current = arr[i];
     let preIndex = i - 1;
+    // 发生逆序，往前插入
+    if (current > arr[i - 1]) continue;
     // 找到当前元素的位置, 并将大于当前元素的元素往后移
-    while (arr[preIndex] > temp) {
+    while (arr[preIndex] > current) {
       arr[preIndex + 1] = arr[preIndex];
       preIndex -= 1;
     }
     // 将当前元素放置于该放的位置
-    arr[preIndex + 1] = temp;
+    arr[preIndex + 1] = current;
   }
 }
 
 ```
 
-
-## 希尔排序
+## 插入排序(二分法搜索)
 
 ### 核心逻辑
+
+与插入排序的区别在于, 使用了二分法定位了当前元素(arr[i])的插入位置, 以及减少了arr[preIndex]的取值操作(其成本较高)
 
 ### 代码实现
 
 ```JavaScript
 
+// 二分查找
+function binarySearch(arr, maxIndex, currentValue) {
+  let min = 0;
+  let max = maxIndex;
+  while (min <= max) {
+    let temp = Math.floor((min + max) / 2);
+    if (arr[temp] < currentValue) {
+      min = temp + 1;
+    } else {
+      max = temp - 1;
+    }
+  }
+  return min;
+}
+// 插入排序 - 二分法搜索
+function insert(arr) {
+  const length = arr.length;
+  for (let i = 1; i < length; i++) {
+    const current = arr[i];
+    let preIndex = i - 1;
+    // 发生逆序，往前插入
+    if (current > arr[i - 1]) continue;
+    const insertIndex = binarySearch(arr, i - 1, current);
+    // 从尾部开始交换元素直至当前元素(arr[i])的插入位置
+    while (preIndex >= insertIndex) {
+      arr[preIndex + 1] = arr[preIndex];
+      preIndex -= 1;
+    }
+    arr[insertIndex] = current;
+  }
+}
 
+```
+
+## 希尔排序
+
+### 核心逻辑
+
+定义gap=arr.length/2对数组进行分组并排序, 再以gap/=2进行分组并排序, 直至gap小于1
+以gap分组的意思如下
+a[i], a[i+gap], ... a[i+gap*n]
+gap=1时, 等同于插入排序
+
+### 代码实现
+
+```JavaScript
+
+// 希尔排序
+function shell(arr) {
+  const len = arr.length;
+  let gap = Math.floor(len / BASE);
+  while (gap >= 1) {
+    for (let i = 0; i <= len - gap; i++) {
+      // 对每个分组进行插入排序, 分组为 a[i], a[i+gap], ... a[i+gap*n]
+      // 通过分组排序, 对比插入排序减少了交换的次数
+      const temp = arr[i];
+      let preIndex = i - gap;
+      while (arr[preIndex] > temp && preIndex >= 0) {
+        arr[preIndex + gap] = arr[preIndex];
+        preIndex -= gap;
+      }
+      arr[preIndex + gap] = temp;
+    }
+    gap = Math.floor(gap / BASE);
+  }
+}
 
 ```
 
@@ -214,6 +283,22 @@ function selection(arr) {
 ## 堆排序
 
 ### 核心逻辑
+
+堆的性质:
+
+* 是一颗完全二叉树
+* 每个节点的值都大于(小于)等于其子节点的值, 为大顶堆(小顶堆)
+
+
+将无序数组构 **建成大顶堆**, 然后从arr[arr.length-1]遍历至arr[1], 每次遍历都将大顶堆(a[0])与当前元素(arr[i])交换位置, 但每次交换都有可能会破坏大顶堆, 故需要重新将数组(arr[0]到arr[i-1]) **整理成新的大顶堆**, 再继续遍历, 直至i=1.
+
+**建成大顶堆的逻辑**:
+
+从数组尾部开始整理, a[i]为顶, a[2*i+1]为左叶子节点, a[2*i+1]为右叶子节点, 将该对整理成大顶堆, 整理完成之后, 若存在交换, 需要将以交换的子节点为顶点的大顶堆也整理成大顶堆, 继续整理交换的子节点直至整理到最后一个子节点, 然后继续遍历数据, 直至遍历到arr[0]
+
+**整理成新的大顶堆的逻辑**: 
+
+若当前遍历到i, 则a[i]为顶, a[2*i+1]为左叶子节点, a[2*i+1]为右叶子节点, 将该对整理成大顶堆, 整理完成之后, 若存在交换, 需要将以交换的子节点为顶点的大顶堆也整理成大顶堆, 继续整理交换的子节点直至整理到最后一个子节点
 
 ### 代码实现
 

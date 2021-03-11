@@ -2,7 +2,7 @@
  * @Author: Kaiser
  * @Date: 2021-03-03 11:57:29
  * @Last Modified by: Kaiser
- * @Last Modified time: 2021-03-08 12:36:25
+ * @Last Modified time: 2021-03-11 12:51:12
  * @Description: 堆排序
  * 核心逻辑:
  * 将待排序序列构造成一个大顶堆，此时，整个序列的最大值就是堆顶的根节点。
@@ -21,7 +21,6 @@ function buildHeap(arr, length) {
   for (let i = len - 1; i >= 0; i--) {
     heapify(arr, i, length);
   }
-  // console.log('buildHeap: ', arr);
 }
 
 // 将每一个非叶子节点调整成大顶堆
@@ -39,9 +38,6 @@ function heapify(arr, i, lastIndex) {
 
   if (largest !== i) {
     swap(arr, largest, i);
-    // console.log(largest, arr[largest]);
-    // console.log(left, arr[left]);
-    // console.log(right, arr[right]);
     heapify(arr, largest, lastIndex);
   }
 }
