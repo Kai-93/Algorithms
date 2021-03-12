@@ -2,11 +2,11 @@
  * @Author: Kaiser
  * @Date: 2021-03-09 19:31:34
  * @Last Modified by: Kaiser
- * @Last Modified time: 2021-03-09 19:43:56
+ * @Last Modified time: 2021-03-12 09:40:15
  * @Description: 桶排序
  */
 
-const insertion = require('./sort_insertion');
+const insert = require('./sort_insert');
 
 function bucket(arr, bucketSize = 100) {
   if (arr.length === 0) return arr;
@@ -30,7 +30,7 @@ function bucket(arr, bucketSize = 100) {
   // 处理结果
   arr.length = 0;
   for (let i = 0; i < buckets.length; i++) {
-    insertion(buckets[i]); // 对每个桶进行排序，这里使用了插入排序
+    insert(buckets[i]); // 对每个桶进行排序，这里使用了插入排序
     for (let j = 0; j < buckets[i].length; j++) {
       arr.push(buckets[i][j]);
     }

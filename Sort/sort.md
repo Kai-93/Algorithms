@@ -6,6 +6,7 @@
     * 快速排序
   * 插入排序
     * 插入排序
+    * 插入排序(二分法搜索)
     * 希尔排序
   * 选择排序
     * 选择排序
@@ -13,11 +14,9 @@
   * 归并排序
     * 归并排序
 * 非比较排序
-  * 计数排序
   * 桶排序
+  * 计数排序
   * 基数排序
-  
-* 二分法排序
 
 ## 前期准备
 
@@ -250,7 +249,7 @@ function shell(arr) {
 
 ### 核心逻辑
 
-倒序遍历无序数组(arr)的每一个元素(arr[i]), 遍历每一个元素(arr[i])时与无序数组中的其余元素(arr[j])作比较, 确定最值(arr[max] < arr[j])并保存至有序数组(arr[i+1 到 arr.length-1])中
+倒序遍历无序数组(arr)的每一个元素(arr[i]), 遍历每一个元素(arr[i])时与无序数组中的其余元素(arr[j])作比较, 确定最值(arr[max] < arr[j])并保存至有序数组(arr[i+1 到 arr.length-1])的arr[i]中
 
 ### 代码实现
 
@@ -304,75 +303,260 @@ function selection(arr) {
 
 ```JavaScript
 
+// 以倒序的方式遍历数组中的每一个非叶子节点并排序成大顶堆
+function buildHeap(arr, length) {
+  let len = Math.floor(length / 2);
+  for (let i = len - 1; i >= 0; i--) {
+    heapify(arr, i, length);
+  }
+}
 
+// 将每一个非叶子节点调整成大顶堆
+function heapify(arr, i, lastIndex) {
+  let left = 2 * i + 1;
+  let right = 2 * i + 2;
+  let largest = i;
+
+  if (left < lastIndex && arr[left] > arr[largest]) {
+    largest = left;
+  }
+  if (right < lastIndex && arr[right] > arr[largest]) {
+    largest = right;
+  }
+
+  if (largest !== i) {
+    swap(arr, largest, i);
+    heapify(arr, largest, lastIndex);
+  }
+}
+
+// 循环置换大顶堆的最大值至未排序的最后一个位置然后调整数组为大顶堆再调整
+function heap(arr = []) {
+  let { length } = arr;
+  buildHeap(arr, length);
+
+  for (let i = length - 1; i > 0; i--) {
+    // 置换大顶堆对最后一个未排序的位置
+    swap(arr, 0, i);
+    // 调整大顶堆
+    heapify(arr, 0, i);
+  }
+  return arr;
+}
 
 ```
 
+### 差异分析
 
+与选择排序的实现相比, 提升的效率来自于查找最大值的效率优化
 
 ## 归并排序
 
 ### 核心逻辑
 
+归并排序就是将大问题即大数组排序分解成小问题即小数组的排序
+
+concat函数可以将两个有序数组合并成有序数组
+
+merge函数可以将一个无序数组分为left和right两个无序数组, 并通过递归使用merge函数处理处理left和right数组, 并使用concat函数合并.
+
+公式详解:
+ 
+merge(arr) 
+= concat(merge(left), merge(right))
+= concat(concat(merge(left-left), merge(left-right)), concat(merge(right-left), merge(right-right)))
+
+...
+
+= concat(concat(...concant([有一个元素 or 无], [有一个元素 or 无])),concat(...concat([有一个元素 or 无], [有一个元素 or 无])))
+
+
+concant([有一个元素 or 无], [有一个元素 or 无]) 该结构开始形成有效数组, 逐步计算等式最终将无序数组处理成有序数组
+
 ### 代码实现
 
 ```JavaScript
 
+function merge(arr) {
+  const { length } = arr;
+  if (length < 2) return arr;
+  const mid = Math.floor(length / 2);
+  return concat(merge(arr.slice(0, mid)), merge(arr.slice(mid)));
+}
 
+function concat(left, right) {
+  const arr = [];
+  /**
+   * 此处可优化
+   * 可优化的情况为:
+   * 1.left[left.length-1] <= right[0]
+   * 2.left[0] >= right[right.length-1]
+   * 这两种情况, 直接处理数组
+   */
+  while (left.length && right.length) {
+    arr.push(left[0] <= right[0] ? left.shift() : right.shift());
+  }
+  return arr.concat(left, right);
+}
 
 ```
-
-
-
-## 计数排序
-
-### 核心逻辑
-
-### 代码实现
-
-```JavaScript
-
-
-
-```
-
 
 
 ## 桶排序
 
 ### 核心逻辑
 
+将数组中的数组, 按数值分别装入范围有序增长的桶中, 即每个桶中允许存放的最大值和最小值的差是相等的, 且相邻桶两个桶, 前置的最大值加一等于后者的最小值, 桶中最大值和最小值的差可自定义, 再将各个桶进行插入排序, 最后依次将桶中的元素输出成最终的有序数组
+
 ### 代码实现
 
 ```JavaScript
 
+const insert = require('./sort_insert');
 
+function bucket(arr, bucketSize = 100) {
+  if (arr.length === 0) return arr;
+
+  // 获取最小值
+  let minValue = arr[0];
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] < minValue) {
+      minValue = arr[i];
+    }
+  }
+
+  // 将数值撞到桶中
+  const buckets = [];
+  for (let i = 0; i < arr.length; i++) {
+    const index = Math.floor((arr[i] - minValue) / bucketSize);
+    if (!buckets[index]) buckets[index] = [];
+    buckets[index].push(arr[i]);
+  }
+
+  // 处理结果
+  arr.length = 0;
+  for (let i = 0; i < buckets.length; i++) {
+    insert(buckets[i]); // 对每个桶进行排序，这里使用了插入排序
+    for (let j = 0; j < buckets[i].length; j++) {
+      arr.push(buckets[i][j]);
+    }
+  }
+
+  return arr;
+}
 
 ```
 
+## 计数排序
 
+### 核心逻辑
+
+1.新建一个数组, 用于保存中间值, 下标是值, 值是数值
+2.遍历需要排序的数组, 以值为下标保存到第一步创建的数组中
+3.遍历中间数组, 返回数据
+
+### 代码实现
+
+```JavaScript
+
+const temp = [];
+
+function counting(arr) {
+  let { length } = arr;
+  // 生成中间数组
+  for (let i = 0; i < length; i++) {
+    const value = arr[i];
+    if (temp[value]) {
+      temp[value].push(value);
+    } else {
+      temp[value] = [value];
+    }
+  }
+
+  const { length: length1 } = temp;
+  let count = 0;
+  for (let i = 0; i < length1; i++) {
+    if (temp[i]) {
+      const { length: length2 } = temp[i];
+      for (let j = 0; j < length2; j++) {
+        arr[count] = temp[i][j];
+        count++;
+      }
+    }
+  }
+  return arr;
+}
+
+```
 
 ## 基数排序
 
 ### 核心逻辑
 
-### 代码实现
-
-```JavaScript
-
-
-
-```
-
-## 二分法
-
-### 核心逻辑
+适用于整数, 与桶排序类似, 从数值的最低位(即个位数开始排序), 依次排序, 直至最最最高位
 
 ### 代码实现
 
 ```JavaScript
 
 
+function getMax(arr = [], length) {
+  let max = arr[0];
+  for (let i = 1; i < length; i++) {
+    const temp = arr[1];
+    if (temp > max) {
+      max = temp;
+    }
+  }
+  return max;
+}
+
+function sort(arr, length, divisor) {
+  const bucket = [];
+  // 初始化分组
+  for (let i = 0; i < 10; i++) {
+    bucket[i] = [];
+  }
+  for (let i = 0; i < length; i++) {
+    let current = arr[i];
+    let j = parseInt(current / divisor);
+    let index = getLastDigit(j);
+    bucket[index].push(current);
+  }
+
+  for (let i = 0; i < length; i++) {
+    arr[i] = getFirstItem(bucket);
+  }
+}
+
+function getFirstItem(arr) {
+  let firstArr = arr[0];
+  let firstItem = firstArr.shift();
+  while (firstItem === undefined) {
+    if (firstArr.length) {
+      firstItem = firstArr.shift();
+    } else {
+      arr.shift();
+      firstArr = arr[0];
+      firstItem = firstArr.shift();
+    }
+  }
+  return firstItem;
+}
+
+function getLastDigit(number) {
+  if (number === 0) return number;
+  const str = number + '';
+  return str[str.length - 1];
+}
+
+function radix(arr) {
+  const { length } = arr;
+  const max = getMax(arr, length);
+  for (let divisor = 1; divisor <= max; divisor *= 10) {
+    sort(arr, length, divisor);
+  }
+}
 
 ```
 
@@ -380,5 +564,3 @@ function selection(arr) {
 [1]: https://www.runoob.com/w3cnote/ten-sorting-algorithm.html
 [2]: https://segmentfault.com/a/1190000004994003#
 [3]: https://zhuanlan.zhihu.com/p/73714165
-
-https://www.zybuluo.com/mdeditor
