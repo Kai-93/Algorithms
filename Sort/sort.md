@@ -69,22 +69,55 @@ function timing(fun, arr, tag) {
 
 ## 核心逻辑
 
-倒序遍历无序数组(arr)的每一个元素(arr[i]), 遍历每一个元素(arr[i])时与无序数组(arr)中的其余元素(arr[j])作比较, 若作比较并交换位置(swap(arr, i, j)), 直至无序数组(arr)遍历完毕
+### 冒泡 - 原始版
+
+倒序遍历无序数组(arr)的坐标为i,i+1到arr.length下标的数组意为有序数组, 遍历无序数组(0到i下标)中的其余元素(arr[j]), 若arr[j]>arr[j+1],则交换位置(swap(arr, j, j+1)), 直至无序数组(arr)遍历完毕
+
+### 冒泡 - 升级版
+
+与原始版相比, 升级版新增一个标识用以保存, 当前次j下标的冒泡是否有进行元素的置换, 若无则表明数组已有序, 无需再冒泡.
 
 ## 代码实现
 
 ```JavaScript
 
-// 冒泡
+// 冒泡 - 原始版
 function bubble(arr) {
-  const length = arr.length;
-  for (let i = length - 1; i >= 0; i--) {
+  let count = 0;
+  for (let i = arr.length - 1; i >= 1; i--) {
     for (let j = 0; j < i; j++) {
-      if (arr[i] < arr[j]) {
-        swap(arr, i, j);
+      count++;
+      if (arr[j] > arr[j + 1]) {
+        count++;
+        swap(arr, j, j + 1);
       }
     }
   }
+  console.log(`冒泡: ${count} 次`);
+}
+
+// 冒泡 - 升级版
+function updatedBubble(arr) {
+  let count = 0;
+  let hasSwaped = false;
+  for (let i = arr.length - 1; i >= 1; i--) {
+    hasSwaped = false;
+    for (let j = 0; j < i; j++) {
+      count++;
+      if (arr[j] > arr[j + 1]) {
+        console.log(arr[j], arr[j + 1]);
+        count++;
+        hasSwaped = true;
+        swap(arr, j, j + 1);
+      }
+    }
+    // 没有发生置换, 意为数组已有序
+    if (!hasSwaped) {
+      console.log(`冒泡 - 升级版: ${count} 次`);
+      return;
+    }
+  }
+  console.log(`冒泡 - 升级版: ${count} 次`);
 }
 
 ```
@@ -93,22 +126,14 @@ function bubble(arr) {
 
 ### 原始版
 
-| i的值 | 遍历的次数 | 交换次数(最少) | 交换次数(最多) |
-| ----- | ---------: | :------------: | -------------: |
-| n-1   |        n-1 |       0        |            n-1 |
-| n-2   |        n-2 |       0        |            n-2 |
-| ...   |            |                |                |
-| 2     |          2 |       0        |              2 |
-| 1     |          1 |       0        |              1 |
-| 0     |          0 |       0        |              0 |
-
-
 时间复杂度: O(n^2), (n*(n-1))/2
 时间复杂度(最坏): O(n^2), 完全逆序, 每次遍历都要交换, (n*(n-1))/2 + (n*(n-1))/2 = (n*(n-1))
-时间复杂度(最佳): O(n), 完成正序, 一次交换都没发生, (n*(n-1))/2
-空间复杂度: O(1)
+时间复杂度(最佳): O(n^2), 完成正序, 一次交换都没发生, (n*(n-1))/2
+空间复杂度: O(n) 每次交换都有变量的声明, 0 到 (n*(n-1))/2
 
 ### 升级版
+
+升级版优化了在遍历过程中若发现当前数组已经是有序就返回
 
 # 快速排序
 
