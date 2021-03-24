@@ -2,9 +2,10 @@
  * @Author: Kaiser
  * @Date: 2021-03-02 13:02:55
  * @Last Modified by: Kaiser
- * @Last Modified time: 2021-03-09 19:50:58
+ * @Last Modified time: 2021-03-22 16:53:53
  * @Description: 数组交换
  */
+let temp = 0;
 /**
  * 交换函数
  * @param {源数组} arr
@@ -13,6 +14,9 @@
  */
 function swap(arr, i, j) {
   if (arr.length < 2 || i === j) return;
-  [arr[i], arr[j]] = [arr[j], arr[i]];
+  temp = arr[j];
+  arr[i] = arr[j];
+  arr[j] = temp;
+  // [arr[i], arr[j]] = [arr[j], arr[i]];
 }
 module.exports = swap;

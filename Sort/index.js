@@ -2,7 +2,7 @@
  * @Author: Kaiser
  * @Date: 2021-03-01 19:34:57
  * @Last Modified by: Kaiser
- * @Last Modified time: 2021-03-22 11:45:29
+ * @Last Modified time: 2021-03-22 16:50:45
  * @Description: 测试性能
  * 示意图:https://www.runoob.com/wp-content/uploads/2019/03/Bucket_sort_1.svg_.png
  */
@@ -21,7 +21,7 @@ const { bubble, updatedBubble } = require('./sort_bubble');
 const items = [
   getItem('冒泡', bubble),
   getItem('冒泡 - 升级版', updatedBubble),
-  // getItem('快速排序', require('./sort_quick')),
+  getItem('快速排序', require('./sort_quick')),
   // getItem('插入排序', require('./sort_insert')),
   // getItem('插入排序(二分法搜索)', require('./sort_insert_by_binary_search')),
   // getItem('希尔排序', require('./sort_shell')),
