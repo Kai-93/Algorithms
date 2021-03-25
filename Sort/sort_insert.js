@@ -2,14 +2,15 @@
  * @Author: Kaiser
  * @Date: 2021-03-02 22:05:20
  * @Last Modified by: Kaiser
- * @Last Modified time: 2021-03-11 08:40:05
+ * @Last Modified time: 2021-03-25 15:59:47
  * @Description: 插入排序
  * 核心逻辑: 将元素插入有序数据
  */
 function insert(arr) {
   const length = arr.length;
+  let current = '';
   for (let i = 1; i < length; i++) {
-    const current = arr[i];
+    current = arr[i];
     let preIndex = i - 1;
     // 发生逆序，往前插入
     if (current > arr[i - 1]) continue;
@@ -22,5 +23,4 @@ function insert(arr) {
     arr[preIndex + 1] = current;
   }
 }
-
 module.exports = insert;

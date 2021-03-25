@@ -203,7 +203,7 @@ function partition(arr, left = 0, right = arr.length - 1) {
 
 时间复杂度(最佳): O(n*log2(n)), 该树是完全二叉树, 即为 n*log2(n)
 
-空间复杂度: O(log2(n)), 跟树的深度相当
+空间复杂度: O(log2(n)), 跟树的深度相当, 因为采用了递归
 
 # 插入排序
 
@@ -221,7 +221,6 @@ function insert(arr) {
   for (let i = 1; i < length; i++) {
      current = arr[i];
     let preIndex = i - 1;
-    // 发生逆序，往前插入
     if (current > arr[i - 1]) continue;
     // 找到当前元素的位置, 并将大于当前元素的元素往后移
     while (arr[preIndex] > current) {
@@ -237,19 +236,19 @@ function insert(arr) {
 
 ## 算法复杂度
 
-时间复杂度: O(n^2), n*(n-1)/2
+时间复杂度: O(n^2), (1+(n-1))*(n-1)/2
 
-时间复杂度(最坏): O(n^2), 数组是倒序时, 第i个元素需要遍历i-1次, 共计n*(n-1)/2
+时间复杂度(最坏): O(n^2), 数组是倒序时, 第i个元素需要遍历并交换i次, 共计 (1+(n-1))*(n-1)/2
 
-时间复杂度(最佳): O(n*log2(n)), 该树是完全二叉树, 即为 n*log2(n)
+时间复杂度(最佳): O(n), 数组是正序时, 遍历一次即可
 
-空间复杂度: O(log2(n)), 跟树的深度相当
+空间复杂度: O(1)
 
 # 插入排序(二分法搜索)
 
 ## 核心逻辑
 
-与插入排序的区别在于, 使用了二分法定位了当前元素(arr[i])的插入位置, 以及减少了arr[preIndex]的取值操作(其成本较高)
+与插入排序的区别在于, 使用了二分法定位了当前元素(arr[i])的插入位置, 以及减少了arr[preIndex]的取值操作和比较的操作(其成本较高), 移动的次数不变
 
 ## 代码实现
 
@@ -275,7 +274,6 @@ function insert(arr) {
   for (let i = 1; i < length; i++) {
     const current = arr[i];
     let preIndex = i - 1;
-    // 发生逆序，往前插入
     if (current > arr[i - 1]) continue;
     const insertIndex = binarySearch(arr, i - 1, current);
     // 从尾部开始交换元素直至当前元素(arr[i])的插入位置
@@ -288,6 +286,15 @@ function insert(arr) {
 }
 
 ```
+## 算法复杂度
+
+时间复杂度: O(n*log2(n)) - O(n^2), n*log2(n) - (1+(n-1))*(n-1)/2, 
+
+时间复杂度(最坏): O(n^2), 数组是倒序时, n*log2(n) - (1+(n-1))*(n-1)/2, 
+
+时间复杂度(最佳): O(n), 数组是正序
+
+空间复杂度: O(1)
 
 # 希尔排序
 
@@ -302,15 +309,17 @@ gap=1时, 等同于插入排序
 
 ```JavaScript
 
+const BASE = 2;
 // 希尔排序
 function shell(arr) {
+  let temp;
   const len = arr.length;
   let gap = Math.floor(len / BASE);
   while (gap >= 1) {
     for (let i = 0; i <= len - gap; i++) {
       // 对每个分组进行插入排序, 分组为 a[i], a[i+gap], ... a[i+gap*n]
       // 通过分组排序, 对比插入排序减少了交换的次数
-      const temp = arr[i];
+      temp = arr[i];
       let preIndex = i - gap;
       while (arr[preIndex] > temp && preIndex >= 0) {
         arr[preIndex + gap] = arr[preIndex];
@@ -323,6 +332,26 @@ function shell(arr) {
 }
 
 ```
+## 算法复杂度
+
+### 算法执行步骤
+
+|    i |             gap |            组数 | 每个分组的元素数量 |      每个分组比较的次数 | 比较次数(每个分组比较的次数 * 组数) |
+| ---: | --------------: | --------------: | -----------------: | ----------------------: | ----------------------------------: |
+|    1 |             n/2 |             n/2 |                  2 |                       1 |                               1*n/2 |
+|    2 |             n/4 |             n/4 |                  4 |                   1+2+3 |                               6*n/4 |
+|  ... |             ... |             ... |                ... |                     ... |                                 ... |
+|    m | n/(2^m)=n/n = 1 | n/(2^m) = /n/=1 |            (2^m)=n | 1+2+3+..(n-1)=(n-1)*n/2 |                       (n-1)*n/2 * 1 |
+
+### 算法复杂度
+
+时间复杂度: O(n*log2(n)), 1*n/2 + 6*n/4 + ... + (n-1)*n/2 * 1 = (m-1)*m/2 * n/(2^m)
+
+时间复杂度(最坏): O(n^2), 数组是倒序时, 遍历+判断+交换, log2(n)*n
+
+时间复杂度(最佳): O(n), 数组是正序时, 遍历+判断, log2(n)*n
+
+空间复杂度: O(1)
 
 
 # 选择排序
