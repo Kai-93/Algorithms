@@ -2,7 +2,7 @@
  * @Author: Kaiser
  * @Date: 2021-03-02 13:02:08
  * @Last Modified by: Kaiser
- * @Last Modified time: 2021-03-22 11:53:46
+ * @Last Modified time: 2021-03-29 15:51:17
  * @Description: 冒泡
  * 每一个排序确定一个最值
  */
@@ -33,7 +33,6 @@ function updatedBubble(arr) {
     for (let j = 0; j < i; j++) {
       count++;
       if (arr[j] > arr[j + 1]) {
-        console.log(arr[j], arr[j + 1]);
         count++;
         hasSwaped = true;
         swap(arr, j, j + 1);
