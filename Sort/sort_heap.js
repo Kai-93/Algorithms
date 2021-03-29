@@ -2,7 +2,7 @@
  * @Author: Kaiser
  * @Date: 2021-03-03 11:57:29
  * @Last Modified by: Kaiser
- * @Last Modified time: 2021-03-29 14:21:22
+ * @Last Modified time: 2021-03-29 15:48:45
  * @Description: 堆排序
  * 核心逻辑:
  * 将待排序序列构造成一个大顶堆，此时，整个序列的最大值就是堆顶的根节点。
@@ -18,6 +18,7 @@ const swap = require('./swap');
 // 以倒序的方式遍历数组中的每一个非叶子节点并排序成大顶堆
 function buildHeap(arr, length) {
   let len = Math.floor(length / 2);
+  // 循环n次
   for (let i = len - 1; i >= 0; i--) {
     heapify(arr, i, length);
   }
@@ -25,7 +26,6 @@ function buildHeap(arr, length) {
 
 // 将每一个非叶子节点调整成大顶堆
 function heapify(arr, i, lastIndex) {
-  debugger
   let left = 2 * i + 1;
   let right = 2 * i + 2;
   let largest = i;
@@ -37,9 +37,9 @@ function heapify(arr, i, lastIndex) {
     largest = right;
   }
 
+  // 对顶元素不是最大值, 需要进行位置交换
   if (largest !== i) {
     swap(arr, largest, i);
-    // 此处递归了
     heapify(arr, largest, lastIndex);
   }
 }
@@ -48,7 +48,6 @@ function heapify(arr, i, lastIndex) {
 function heap(arr = []) {
   let { length } = arr;
   buildHeap(arr, length);
-
   for (let i = length - 1; i > 0; i--) {
     // 置换大顶堆对最后一个未排序的位置
     swap(arr, 0, i);
@@ -88,7 +87,7 @@ function updatedHeapify(arr, i, lastIndex) {
     right = 2 * i + 2; // 右子节点
     largest = i; // 初始化最大值为堆顶
     // 遍历超过数组后, 结束循环
-    if (left > lastIndex || right > lastIndex) break;
+    if (left >= lastIndex || right >= lastIndex) break;
     if (arr[left] > arr[largest]) largest = left;
     if (arr[right] > arr[largest]) largest = right;
     // 若最大值不是堆顶, 则交换最大值和堆顶的位置
@@ -105,9 +104,9 @@ function updatedHeapify(arr, i, lastIndex) {
 // 循环置换大顶堆的最大值至未排序的最后一个位置然后调整数组为大顶堆再调整
 // 升级版, 将递归改成迭代
 function updatedHeap(arr = []) {
-  // let { length } = arr;
-  // if (length < 2) return arr;
-  // updatedBuildHeap(arr, length);
+  let { length } = arr;
+  if (length < 2) return arr;
+  updatedBuildHeap(arr, length);
   return arr;
 }
 

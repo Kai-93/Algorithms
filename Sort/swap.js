@@ -2,7 +2,7 @@
  * @Author: Kaiser
  * @Date: 2021-03-02 13:02:55
  * @Last Modified by: Kaiser
- * @Last Modified time: 2021-03-22 16:53:53
+ * @Last Modified time: 2021-03-29 15:22:36
  * @Description: 数组交换
  */
 let temp = 0;
@@ -14,7 +14,7 @@ let temp = 0;
  */
 function swap(arr, i, j) {
   if (arr.length < 2 || i === j) return;
-  temp = arr[j];
+  temp = arr[i];
   arr[i] = arr[j];
   arr[j] = temp;
   // [arr[i], arr[j]] = [arr[j], arr[i]];
