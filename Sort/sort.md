@@ -321,6 +321,7 @@ function shell(arr) {
       // 通过分组排序, 对比插入排序减少了交换的次数
       temp = arr[i];
       let preIndex = i - gap;
+      // 最佳的情况是不进入下方的逻辑, 即数组是正序的
       while (arr[preIndex] > temp && preIndex >= 0) {
         arr[preIndex + gap] = arr[preIndex];
         preIndex -= gap;
@@ -354,9 +355,9 @@ sum = n*(log2(2^n/n^(1/2)) - 1)
 * sum < n*(2^log2(n) - 1) < n^2
 * sum = n*(log2(2^n/n^(1/2)) - 1)... 约不出来呀, 查询得 sum > n*log2(n)
 
-时间复杂度(最坏): O(n^2)
+时间复杂度(最坏): 小于O(n^2)
 
-时间复杂度(最佳): O(n*log2(n))
+时间复杂度(最佳): O(n*log2(n)), 数组是正序的
 
 空间复杂度: O(1)
 
@@ -393,7 +394,15 @@ function selection(arr) {
 
 与冒泡的实现相比, 提升的效率来自于减少了交换(swap)次数, 通过max变量暂存了最大值的下标留以交换
 
+## 算法复杂度
 
+时间复杂度: O(n^2)
+
+时间复杂度(最坏): O(n^2)
+
+时间复杂度(最佳): O(n^2)
+
+空间复杂度: O(1)
 
 # 堆排序
 
@@ -422,6 +431,7 @@ function selection(arr) {
 // 以倒序的方式遍历数组中的每一个非叶子节点并排序成大顶堆
 function buildHeap(arr, length) {
   let len = Math.floor(length / 2);
+  // 循环n次
   for (let i = len - 1; i >= 0; i--) {
     heapify(arr, i, length);
   }
@@ -465,6 +475,28 @@ function heap(arr = []) {
 ## 差异分析
 
 与选择排序的实现相比, 提升的效率来自于查找最大值的效率优化
+
+## 算法复杂度
+### 原始版
+
+时间复杂度: O(n*log2(n))
+
+时间复杂度(最坏): O(n*log2(n))
+
+时间复杂度(最佳): O(n*log2(n))
+
+空间复杂度: O(log2(n))
+
+### 升级版
+
+时间复杂度: O(n*log2(n))
+
+时间复杂度(最坏): O(n*log2(n))
+
+时间复杂度(最佳): O(n*log2(n))
+
+空间复杂度: O(log2(n))
+
 
 # 归并排序
 
@@ -693,5 +725,5 @@ function radix(arr) {
 | 基数排序             |                  |                  |                  |            |        |
 
 [1]: https://www.runoob.com/w3cnote/ten-sorting-algorithm.html
-[2]: https://segmentfault.com/a/1190000004994003#
+[2]: https://ivanfan.site/2016/04/23/Sort/
 [3]: https://zhuanlan.zhihu.com/p/73714165
